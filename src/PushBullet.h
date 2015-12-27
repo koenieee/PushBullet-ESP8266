@@ -25,6 +25,7 @@ class PushBullet{
 	private:
 	
 		String buildRequest(String url, String body);
+		bool sendRequest(String reg);
 	
 		WiFiClientSecure * secure_client;
 		uint16_t port;
