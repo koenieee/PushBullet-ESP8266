@@ -4,10 +4,7 @@
 #include <SPI.h>
 #include <WiFiClientSecure.h>
 
-
-typedef enum {NOTE, LINK, FILES} PUSH_TYPE;
-
-
+#define DEBUGGING true
 
 class PushBullet{
 	
@@ -19,9 +16,11 @@ class PushBullet{
 		bool closeConnection();
 		bool checkConnection();
 		
-		void sendNormalPush(const String message, const String title, PUSH_TYPE theType);
-		void sendSMSPush();
-		void copyToClipboard();
+		void sendNotePush(const String message, const String title);
+		void sendLinkPush(const String message, const String title, const String url);
+		
+		void sendSMSPush(const String message, const String phoneNumber, const String source_device, const String source_user);
+		void copyToClipboard(const String contents, const String source_device = "", const String source_user = "");
 		
 	private:
 	

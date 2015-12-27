@@ -8,14 +8,15 @@ WiFiClientSecure client;
 #define PORT 443
 
 // wifi connection variables
-const char* ssid     = "Ziggo21670";
-const char* password = "7zqxqyVJVpkq";
+const char* ssid     = "SSID";
+const char* password = "PASS";
 
 boolean wifiConnected = false;
 
+int incomingByte = 0;
 boolean connectWifi();
 
-PushBullet pb = PushBullet("dYla0gPdoQhLxUk2KwMY4kzWRimg80Em", &client, 443);
+PushBullet pb = PushBullet("API", &client, 443);
 
 
 void setup() {
@@ -38,9 +39,33 @@ void setup() {
 void loop() {
   // check if the WiFi connection were successful
   if (wifiConnected) {
-    Serial.println("Pushbullet notifiing");
-    pb.sendNormalPush("Test berichtje", "TEST", PUSH_TYPE::NOTE);
-    delay(5000);
+    if (Serial.available() > 0) {
+      // read the incoming byte:
+      incomingByte = Serial.read();
+
+      switch (incomingByte) {
+        case 'l':
+          Serial.println("Pushbullet link pushing");
+          pb.sendLinkPush("Hello, from google", "Google", "http://google.nl");
+          delay(5000);
+          break;
+        case 'n':
+          Serial.println("Pushbullet note pushing");
+          pb.sendNotePush("Hello, from me", "Message");
+          delay(5000);
+          break;
+        case 'c':
+          Serial.println("Pushbullet coping clipboard pushing");
+          pb.copyToClipboard("Hello from above our magnificent planet Earth.");
+          delay(5000);
+          break;
+       case 's':
+          Serial.println("Pushbullet sending sms");
+          pb.sendSMSPush("This is an SMS from the ESP8266", "+00000", "TARGET", "USER");
+          delay(5000);
+          break;
+      }
+    }
   }
 }
 

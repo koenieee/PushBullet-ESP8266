@@ -33,7 +33,7 @@ bool PushBullet::checkConnection(){
 String PushBullet::buildRequest(String url, String body){
 	String request = String("POST ") + url +" HTTP/1.1\r\n" +
                    "Host: " + push_bullet_host + "\r\n" +
-                   "User-Agent: curl/7.44.0\r\n" +
+                   "User-Agent: ESP8266/NodeMCU 0.9\r\n" +
                    "Accept: */*\r\n" +
                    "Content-Type: application/json\r\n" +
                    "Content-Length: "+body.length()+"\r\n" +
@@ -42,28 +42,52 @@ String PushBullet::buildRequest(String url, String body){
 	return request;
 }
 
-void PushBullet::sendNormalPush(const String message, const String title, PUSH_TYPE theType){
-	String type;
-	switch(theType){
-		case NOTE: 
-			type = "note";
-		break;
-	}
-	
-	String req = buildRequest("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"type\":\""+type+"\"}");
+void PushBullet::sendNotePush(const String message, const String title){
+	String req = buildRequest("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"type\":\"note\"}");
 				   
-	Serial.println("Request string: ");
+#ifdef DEBUGGING
+    Serial.println("Request string: ");
 	Serial.println(req);
+#endif
+	
 				   
 	secure_client->print(req);
 }
 
-void PushBullet::sendSMSPush(){
+void PushBullet::sendLinkPush(const String message, const String title, const String url){
+	String req = buildRequest("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"url\":\""+url+"\",\"type\":\"link\"}");
+				   
+#ifdef DEBUGGING
+    Serial.println("Request string: ");
+	Serial.println(req);
+#endif
 	
+				   
+	secure_client->print(req);
 	
 }
 
-void PushBullet::copyToClipboard(){
+void PushBullet::sendSMSPush(const String message, const String phoneNumber, const String source_device, const String source_user){
+	String req = buildRequest("/v2/ephemerals", "{ \"push\": {    \"conversation_iden\": \""+phoneNumber+"\",    \"message\": \""+message+"\",    \"package_name\": \"com.pushbullet.android\",    \"source_user_iden\": \""+source_user+"\",    \"target_device_iden\": \""+source_device+"\",    \"type\": \"messaging_extension_reply\"  },  \"type\": \"push\"}			");
 	
+#ifdef DEBUGGING
+    Serial.println("Request string: ");
+	Serial.println(req);
+#endif
 	
+				   
+	secure_client->print(req);
+	
+}
+
+void PushBullet::copyToClipboard(const String contents, const String source_device, const String source_user){
+ 	String req = buildRequest("/v2/ephemerals", "{\"push\":{\"body\":\""+contents+"\",\"source_device_iden\":\""+source_device+"\",\"source_user_iden\":\""+source_user+"\",\"type\":\"clip\"},\"type\":\"push\"}");
+	
+#ifdef DEBUGGING
+    Serial.println("Request string: ");
+	Serial.println(req);
+#endif
+	
+				   
+	secure_client->print(req);
 }
