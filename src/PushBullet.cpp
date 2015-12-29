@@ -42,7 +42,7 @@ String PushBullet::buildRequest(String url, String body){
 	return request;
 }
 
-bool PushBullet::sendRequest(String reg){
+bool PushBullet::sendRequest(String req){
 
 #ifdef DEBUGGING
     Serial.println("Request string: ");
