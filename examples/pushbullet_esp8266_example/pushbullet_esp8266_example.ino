@@ -64,6 +64,18 @@ void loop() {
           pb.sendSMSPush("This is an SMS from the ESP8266", "+00000", "TARGET", "USER");
           delay(5000);
           break;
+	   case 'a':
+          Serial.println("Adding device to pushbullet server");
+          String result = pb.registerThisDevice("KoenKamert", "asdf1238518615312");
+		  Serial.println("Result was: " + result);
+          delay(5000);
+          break;
+	   case 'g':
+          Serial.println("Getting latest pushes:");
+          String result = pb.getLatestPushed("NOW", 10);
+		  Serial.println("Result was: " + result);
+          delay(5000);
+          break;
       }
     }
   }

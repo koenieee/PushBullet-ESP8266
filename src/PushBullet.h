@@ -22,10 +22,14 @@ class PushBullet{
 		void sendSMSPush(const String message, const String phoneNumber, const String source_device, const String source_user);
 		void copyToClipboard(const String contents, const String source_device = "", const String source_user = "");
 		
+		void registerThisDevice(const String nickName, const String pushToken = "");
+		
+		String getLatestPushed(const String modified_after, int limit);
+		
 	private:
 	
-		String buildRequest(String url, String body);
-		bool sendRequest(String reg);
+		String buildRequest(String url, String body, String getOrPost = "POST");
+		String sendRequest(String reg);
 	
 		WiFiClientSecure * secure_client;
 		uint16_t port;
