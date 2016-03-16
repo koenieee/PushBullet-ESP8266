@@ -9,14 +9,14 @@ WiFiClientSecure client;
 
 // wifi connection variables
 const char* ssid     = "SSID";
-const char* password = "PASS";
+const char* password = "KEY";
 
 boolean wifiConnected = false;
 
 int incomingByte = 0;
 boolean connectWifi();
 
-PushBullet pb = PushBullet("API", &client, 443);
+PushBullet pb = PushBullet("API_KEY", &client, 443);
 
 
 void setup() {
@@ -42,41 +42,39 @@ void loop() {
     if (Serial.available() > 0) {
       // read the incoming byte:
       incomingByte = Serial.read();
-
+      String result = "";
       switch (incomingByte) {
         case 'l':
           Serial.println("Pushbullet link pushing");
-          pb.sendLinkPush("Hello, from google", "Google", "http://google.nl");
-          delay(5000);
+          result = pb.sendLinkPush("Hello, from google", "Google", "http://google.nl");
           break;
         case 'n':
           Serial.println("Pushbullet note pushing");
-          pb.sendNotePush("Hello, from me", "Message");
-          delay(5000);
+          result = pb.sendNotePush("Hello, from me", "Message");
           break;
         case 'c':
           Serial.println("Pushbullet coping clipboard pushing");
-          pb.copyToClipboard("Hello from above our magnificent planet Earth.");
-          delay(5000);
+          result = pb.copyToClipboard("Hello from above our magnificent planet Earth.");
           break;
-       case 's':
+        case 's':
           Serial.println("Pushbullet sending sms");
-          pb.sendSMSPush("This is an SMS from the ESP8266", "+00000", "TARGET", "USER");
-          delay(5000);
+          result = pb.sendSMSPush("This is an SMS from the ESP8266", "+00000", "TARGET", "USER");
           break;
-	   case 'a':
+        case 'a':
           Serial.println("Adding device to pushbullet server");
-          String result = pb.registerThisDevice("KoenKamert", "asdf1238518615312");
-		  Serial.println("Result was: " + result);
-          delay(5000);
+          result = pb.registerThisDevice("DEVICE_NAME", "DEVICE_ID");
           break;
-	   case 'g':
-          Serial.println("Getting latest pushes:");
-          String result = pb.getLatestPushed("NOW", 10);
-		  Serial.println("Result was: " + result);
-          delay(5000);
+        case 'g':
+          Serial.println("Getting latest push:");
+          //char * res = (char*)pb.getLatestPushed("PUSH_DATE", 1).c_str();
+          pushesJsonObject pjo = pb.convertJsonToStruct();
+          Serial.println("Name is: " + pjo.byWho);
+          Serial.println("Message is: " + pjo.message);
+          Serial.println("Title is: " + pjo.title);
           break;
       }
+      Serial.println("Result was: " + result);
+      delay(5000);
     }
   }
 }
@@ -94,7 +92,7 @@ boolean connectWifi() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    if (i > 10) {
+    if (i > 30) {
       state = false;
       break;
     }

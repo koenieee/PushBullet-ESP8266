@@ -3,8 +3,17 @@
 
 #include <SPI.h>
 #include <WiFiClientSecure.h>
+#include <ArduinoJson.h>
 
 #define DEBUGGING true
+//#define RETURN_FULLHEADER false
+
+struct pushesJsonObject {
+	String title;
+	String message;
+	String byWho;
+	
+};
 
 class PushBullet{
 	
@@ -16,15 +25,18 @@ class PushBullet{
 		bool closeConnection();
 		bool checkConnection();
 		
-		void sendNotePush(const String message, const String title);
-		void sendLinkPush(const String message, const String title, const String url);
+		String sendNotePush(const String message, const String title);
+		String sendLinkPush(const String message, const String title, const String url);
 		
-		void sendSMSPush(const String message, const String phoneNumber, const String source_device, const String source_user);
-		void copyToClipboard(const String contents, const String source_device = "", const String source_user = "");
+		String sendSMSPush(const String message, const String phoneNumber, const String source_device, const String source_user);
+		String copyToClipboard(const String contents, const String source_device = "", const String source_user = "");
 		
-		void registerThisDevice(const String nickName, const String pushToken = "");
+		String registerThisDevice(const String nickName, const String pushToken);
 		
 		String getLatestPushed(const String modified_after, int limit);
+		
+		pushesJsonObject convertJsonToStruct(char json[600]);
+		
 		
 	private:
 	
