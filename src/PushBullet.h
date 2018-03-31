@@ -11,7 +11,7 @@ class PushBullet{
 	public:
 	
 		PushBullet(const String api_token, WiFiClientSecure * secure_client, uint16_t port);
-		
+		bool checkConnection();
 		void sendNotePush(const String message, const String title);
 		void sendLinkPush(const String message, const String title, const String url);
 		
@@ -27,7 +27,7 @@ class PushBullet{
 	
 		bool openConnection();
 		bool closeConnection();
-		bool checkConnection();
+
 	
 		WiFiClientSecure * secure_client;
 		uint16_t port;
