@@ -12,10 +12,6 @@ class PushBullet{
 	
 		PushBullet(const String api_token, WiFiClientSecure * secure_client, uint16_t port);
 		
-		bool openConnection();
-		bool closeConnection();
-		bool checkConnection();
-		
 		void sendNotePush(const String message, const String title);
 		void sendLinkPush(const String message, const String title, const String url);
 		
@@ -28,6 +24,10 @@ class PushBullet{
 		bool sendRequest(String reg);
 		void sendAndToggl(String req);
 		void togglConnection();
+	
+		bool openConnection();
+		bool closeConnection();
+		bool checkConnection();
 	
 		WiFiClientSecure * secure_client;
 		uint16_t port;
