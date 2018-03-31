@@ -26,9 +26,6 @@ void setup() {
   // Initialise wifi connection
   wifiConnected = connectWifi();
 
-  pb.openConnection();
-
-
   if (!pb.checkConnection()) {
     Serial.println("Failed to connect to pushbullet.com");
     return;
