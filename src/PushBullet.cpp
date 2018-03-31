@@ -17,17 +17,25 @@ bool PushBullet::openConnection(){
 
 bool PushBullet::closeConnection(){
 	this->secure_client->stop();
-	if(this->secure_client->connected() == 1){
-		return false;
-	}
-	else{
-		return true;
-	}
+	return checkConnection();
 }
 
 bool PushBullet::checkConnection(){
-	
-	
+	if(this->secure_client->connected() == 1){
+		return true;
+	}
+	else{
+		return false;
+	}	
+}
+
+void PushBullet::togglConnection(){
+	if(checkConnection()){
+		closeConnection();
+	}
+	else{
+		closeConnection();
+	}	
 }
 
 String PushBullet::buildRequest(String url, String body){
@@ -43,7 +51,7 @@ String PushBullet::buildRequest(String url, String body){
 }
 
 bool PushBullet::sendRequest(String req){
-
+if(
 #ifdef DEBUGGING
     Serial.println("Request string: ");
 	Serial.println(req);
@@ -53,25 +61,25 @@ bool PushBullet::sendRequest(String req){
 	
 }
 
+void PushBullet::sendAndToggl(String req){
+	togglConnection();
+	sendRequest(req);
+	togglConnection();
+}
+	
 
 void PushBullet::sendNotePush(const String message, const String title){
-	String req = buildRequest("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"type\":\"note\"}");
-	sendRequest(req);
-
+	sendAndToggl("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"type\":\"note\"}");
 }
 
 void PushBullet::sendLinkPush(const String message, const String title, const String url){
-	String req = buildRequest("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"url\":\""+url+"\",\"type\":\"link\"}");		   
-	sendRequest(req);
+	sendAndToggl("/v2/pushes", "{\"body\":\""+message+"\",\"title\":\""+title+"\",\"url\":\""+url+"\",\"type\":\"link\"}");		   
 }
 
 void PushBullet::sendSMSPush(const String message, const String phoneNumber, const String source_device, const String source_user){
-	String req = buildRequest("/v2/ephemerals", "{ \"push\": {    \"conversation_iden\": \""+phoneNumber+"\",    \"message\": \""+message+"\",    \"package_name\": \"com.pushbullet.android\",    \"source_user_iden\": \""+source_user+"\",    \"target_device_iden\": \""+source_device+"\",    \"type\": \"messaging_extension_reply\"  },  \"type\": \"push\"}			");
-	sendRequest(req);
-	
+	sendAndToggl("/v2/ephemerals", "{ \"push\": {    \"conversation_iden\": \""+phoneNumber+"\",    \"message\": \""+message+"\",    \"package_name\": \"com.pushbullet.android\",    \"source_user_iden\": \""+source_user+"\",    \"target_device_iden\": \""+source_device+"\",    \"type\": \"messaging_extension_reply\"  },  \"type\": \"push\"}			");
 }
 
-void PushBullet::copyToClipboard(const String contents, const String source_device, const String source_user){
- 	String req = buildRequest("/v2/ephemerals", "{\"push\":{\"body\":\""+contents+"\",\"source_device_iden\":\""+source_device+"\",\"source_user_iden\":\""+source_user+"\",\"type\":\"clip\"},\"type\":\"push\"}");
-	sendRequest(req);
+bool PushBullet::copyToClipboard(const String contents, const String source_device, const String source_user){
+	sendAndToggl("/v2/ephemerals", "{\"push\":{\"body\":\""+contents+"\",\"source_device_iden\":\""+source_device+"\",\"source_user_iden\":\""+source_user+"\",\"type\":\"clip\"},\"type\":\"push\"}");
 }
