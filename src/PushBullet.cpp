@@ -34,7 +34,7 @@ void PushBullet::togglConnection(){
 		closeConnection();
 	}
 	else{
-		closeConnection();
+		openConnection();
 	}	
 }
 
